@@ -1,5 +1,7 @@
 package eu.radusw
 
+import java.nio.file.Paths
+
 import akka.http.javadsl.model.headers.CacheControl
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.model.headers.CacheDirectives
@@ -10,7 +12,8 @@ import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.StrictLogging
 import doobie.hikari.HikariTransactor
 import eu.radusw.repositories.TodoRepository
-import eu.radusw.resources.TodoResource
+import eu.radusw.resources.{FrontendResource, TodoResource}
+import eu.radusw.services.TodoService
 import monix.eval.Task
 import monix.execution.ExecutionModel.AlwaysAsyncExecution
 import monix.execution.Scheduler
@@ -21,7 +24,6 @@ import scala.concurrent.duration._
 import scala.util.Try
 
 object Server extends App with StrictLogging {
-
   Try(args(0)).foreach(System.setProperty("config.file", _))
 
   // Configuration
@@ -43,14 +45,11 @@ object Server extends App with StrictLogging {
   flyway.migrate()
 
   // Blocking operation scheduler
-  implicit val blockingOpsScheduler =
-    Scheduler(Contexts.blockingOpsDispatcher, AlwaysAsyncExecution)
+  implicit val blockingOpsScheduler = Scheduler(Contexts.blockingOpsDispatcher, AlwaysAsyncExecution)
 
   object Repositories {
     implicit val xa = Await.result(
-      HikariTransactor
-        .newHikariTransactor[Task](dbDriver, dbUrl, dbUser, dbPass)
-        .runAsync,
+      HikariTransactor.newHikariTransactor[Task](dbDriver, dbUrl, dbUser, dbPass).runAsync,
       1.minute
     )
 
@@ -58,23 +57,22 @@ object Server extends App with StrictLogging {
   }
 
   object Services {
-    // import Repositories._
+    import Repositories._
 
+    val todoService: TodoService[Task] = todoRepository
   }
 
   object Resources {
-    import Repositories._
-    // import Services._
+    import Services._
 
-    val todoResource = new TodoResource(todoRepository)
+    val todoResource = new TodoResource(todoService)
   }
 
   // Akka HTTP
   implicit val system = Contexts.akkaSystem
   implicit val mat = ActorMaterializer()
 
-  val cacheControlHeader =
-    CacheControl.create(CacheDirectives.`no-cache`, CacheDirectives.`no-store`)
+  val cacheControlHeader = CacheControl.create(CacheDirectives.`no-cache`, CacheDirectives.`no-store`)
   val routes = {
     import Resources._
 
@@ -82,7 +80,8 @@ object Server extends App with StrictLogging {
       respondWithDefaultHeaders(cacheControlHeader) {
         pathPrefix("api") {
           todoResource.route()
-        }
+        } ~
+          FrontendResource.route(Paths.get("frontend/"))
       }
     }
   }

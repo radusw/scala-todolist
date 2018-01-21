@@ -1,26 +1,25 @@
 package eu.radusw.util
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.{LocalDate, Instant}
 
 import cats.syntax.either._
 import io.circe.{Decoder, Encoder}
 import shapeless.Unwrapped
 
 object JsonHelper {
-
-  implicit val encodeInstant: Encoder[ZonedDateTime] =
-    Encoder.encodeString.contramap[ZonedDateTime](_.toString)
-  implicit val decodeInstant: Decoder[ZonedDateTime] =
+  implicit val encodeInstant: Encoder[Instant] =
+    Encoder.encodeString.contramap[Instant](_.toString)
+  implicit val decodeInstant: Decoder[Instant] =
     Decoder.decodeString.emap { str =>
-      Either.catchNonFatal(ZonedDateTime.parse(str)).leftMap(_ => "err")
+      Either.catchNonFatal(Instant.parse(str)).leftMap(_ => "err")
     }
 
   implicit val encodeDate: Encoder[LocalDate] =
     Encoder.encodeString.contramap[LocalDate](_.toString)
-  implicit val decodeDate: Decoder[LocalDate] = Decoder.decodeString.emap {
-    str =>
+  implicit val decodeDate: Decoder[LocalDate] =
+    Decoder.decodeString.emap { str =>
       Either.catchNonFatal(LocalDate.parse(str)).leftMap(_ => "err")
-  }
+    }
 
   implicit def decodeAnyVal[T, U](implicit ev: T <:< AnyVal,
                                   unwrapped: Unwrapped.Aux[T, U],

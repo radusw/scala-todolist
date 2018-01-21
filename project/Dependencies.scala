@@ -23,7 +23,8 @@ object Dependencies {
 
   lazy val testDependencies = Seq (
     "org.scalatest"          %% "scalatest"             % scalaTestV % Test,
-    "org.scalacheck"         %% "scalacheck"            % scheckV    % Test
+    "org.scalacheck"         %% "scalacheck"            % scheckV    % Test,
+    "com.typesafe.akka"      %% "akka-http-testkit"     % akkaHttpV  % Test
   )
 
   lazy val rootDependencies = Seq(

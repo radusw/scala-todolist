@@ -1,6 +1,6 @@
 package eu.radusw.resources
 
-import java.time.ZonedDateTime
+import java.time.Instant
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
@@ -8,6 +8,7 @@ import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import eu.radusw.models.{Todo, TodoId}
 import eu.radusw.services.TodoService
 import eu.radusw.util.Pagination
+import eu.radusw.util.Pagination._
 import eu.radusw.util.JsonHelper._
 import io.circe.generic.auto._
 import monix.eval.Task
@@ -18,15 +19,13 @@ class TodoResource(service: TodoService[Task])(implicit scheduler: Scheduler) {
   def route(): Route = pathPrefix("todos") {
     pathEndOrSingleSlash {
       post {
-        entity(as[(TodoId, ZonedDateTime) => Todo]) { partialTodo =>
+        entity(as[(TodoId, Instant) => Todo]) { partialTodo =>
           complete(service.create(partialTodo).runAsync)
         }
       } ~
         get {
-          parameters(
-            (Pagination.page.as[Int] ? 1, Pagination.perPage.as[Int] ? 10)) {
-            (page, perPage) =>
-              complete(service.findAll(Pagination(page, perPage)).runAsync)
+          parameters((page.as[Int] ? 1, perPage.as[Int] ? 10)) { (page, perPage) =>
+            complete(service.findAll(Pagination(page, perPage)).runAsync)
           }
         }
     } ~

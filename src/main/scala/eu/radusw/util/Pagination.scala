@@ -26,8 +26,7 @@ case class PaginationResult[T](
 }
 object PaginationResult {
 
-  implicit def encodeFoo[T](
-      implicit en: Encoder[List[T]]): Encoder[PaginationResult[T]] =
+  implicit def encodeFoo[T](implicit en: Encoder[List[T]]): Encoder[PaginationResult[T]] =
     pr =>
       Json.obj(
         ("page", Json.fromInt(pr.page)),

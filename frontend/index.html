@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>radusw/scala-todolist</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios@0.12.0/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+</head>
+<body>
+<div id="app">
+    <input v-model="name">
+    <input v-model="text">
+    <button v-on:click="add">Add</button>
+    <br/>
+    Page: <input v-model="page"> / {{ pages }}
+    <p>
+        <table>
+            <tr v-for="todo in todos">
+                <td style="text-align: left"><small>{{ todo.timestamp }} - </small></td>
+                <td>{{ todo.name }}: </td>
+                <td style="text-align: right">{{ todo.text }}</td>
+            </tr>
+        </table>
+    </p>
+</div>
+<script type="text/javascript" src="app.js"></script>
+</body>
+</html>

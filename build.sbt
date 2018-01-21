@@ -13,8 +13,7 @@ lazy val commonSettings = Seq(
   resolvers ++= projectResolvers,
   libraryDependencies ++= dependencies,
   scalacOptions ++= compileSettings,
-  scalacOptions in (Compile, console) --= Seq("-Ywarn-unused:imports",
-                                              "-Xfatal-warnings"),
+  scalacOptions in (Compile, console) --= Seq("-Ywarn-unused:imports", "-Xfatal-warnings"),
   scalafmtOnCompile := true,
   fork in run := true,
   fork in Test := true,
@@ -22,8 +21,8 @@ lazy val commonSettings = Seq(
   connectInput in run := true,
   javaOptions in run ++= forkedJvmOption,
   javaOptions in Test ++= forkedJvmOption,
-  mappings in Universal ++= (baseDirectory.value / "conf" * "*").get.map(x =>
-    x -> ("conf/" + x.getName)),
+  mappings in Universal ++= (baseDirectory.value / "conf" * "*").get.map(x => x -> ("conf/" + x.getName)),
+  mappings in Universal ++= (baseDirectory.value / "frontend" * "*").get.map(x => x -> ("frontend/" + x.getName)),
   javaOptions in Universal ++= Seq(
     "-server",
     "-Dfile.encoding=UTF8",
