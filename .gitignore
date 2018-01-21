@@ -1,2 +1,5 @@
 *.class
 *.log
+project/target
+target
+logs
