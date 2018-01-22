@@ -24,7 +24,7 @@ class TodoRepository(implicit xa: Transactor[Task]) extends TodoService[Task] {
     val todo = partialTodo(todoId, Instant.now())
     val insertAction: ConnectionIO[Int] =
       sql"""
-            INSERT INTO "public"."todos"("id","name", "timestamp", "text")
+            INSERT INTO todos("id","name", "timestamp", "text")
             VALUES (${todo.id}, ${todo.name}, ${todo.timestamp}, ${todo.text})
         """.update.run
 

@@ -12,7 +12,7 @@ import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.StrictLogging
 import doobie.hikari.HikariTransactor
 import eu.radusw.repositories.TodoRepository
-import eu.radusw.resources.{FrontendResource, TodoResource}
+import eu.radusw.resources.{FrontendResource, TodoResource, VersionResource}
 import eu.radusw.services.TodoService
 import monix.eval.Task
 import monix.execution.ExecutionModel.AlwaysAsyncExecution
@@ -75,7 +75,7 @@ object Server extends App with StrictLogging {
     encodeResponse {
       respondWithDefaultHeaders(cacheControlHeader) {
         pathPrefix("api") {
-          todoResource.route()
+          todoResource.route() ~ VersionResource.route()
         } ~
           FrontendResource.route(Paths.get("ui/"))
       }
