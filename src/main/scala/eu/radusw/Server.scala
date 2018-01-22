@@ -21,12 +21,8 @@ import org.flywaydb.core.Flyway
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
-import scala.util.Try
 
 object Server extends App with StrictLogging {
-  Try(args(0)).foreach(System.setProperty("config.file", _))
-
-  // Configuration
   val config: Config = ConfigFactory.load()
 
   val dbProps = config.getConfig("db")
@@ -81,7 +77,7 @@ object Server extends App with StrictLogging {
         pathPrefix("api") {
           todoResource.route()
         } ~
-          FrontendResource.route(Paths.get("frontend/"))
+          FrontendResource.route(Paths.get("ui/"))
       }
     }
   }

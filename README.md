@@ -14,7 +14,7 @@ $docker run -d -e PG_HOST='docker.for.mac.localhost' \
  -e PG_PORT='5432' \
  -e PG_USER='dev' \
  -e PG_DATABASE_NAME='world' \
- -p 9002:9000 --restart unless-stopped --name todo radusw/todo-list:latest
+ -p 9000:9000 --restart unless-stopped --name todo radusw/todo-list:latest
 ```
 
 Use:

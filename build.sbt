@@ -21,8 +21,7 @@ lazy val commonSettings = Seq(
   connectInput in run := true,
   javaOptions in run ++= forkedJvmOption,
   javaOptions in Test ++= forkedJvmOption,
-  mappings in Universal ++= (baseDirectory.value / "conf" * "*").get.map(x => x -> ("conf/" + x.getName)),
-  mappings in Universal ++= (baseDirectory.value / "frontend" * "*").get.map(x => x -> ("frontend/" + x.getName)),
+  mappings in Universal ++= (baseDirectory.value / "ui" * "*").get.map(x => x -> ("ui/" + x.getName)),
   javaOptions in Universal ++= Seq(
     "-server",
     "-Dfile.encoding=UTF8",
@@ -119,7 +118,7 @@ lazy val dockerSettings = Seq(
     Cmd("RUN apk upgrade --update && apk add --update openjdk8-jre"),
     Cmd("ADD", "opt /opt"),
     Cmd("WORKDIR", "/opt/todo-list"),
-    ExecCmd("ENTRYPOINT", "bin/todo-list", "conf/docker.conf")
+    ExecCmd("ENTRYPOINT", "bin/todo-list")
   ),
   dockerExposedPorts := Seq(9000),
   version in Docker := version.value,

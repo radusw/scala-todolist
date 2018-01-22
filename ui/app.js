@@ -22,7 +22,6 @@ var app = new Vue({
           axios
             .get('/api/todos?page=' + page)
             .then(response => {
-              console.log(response.data)
               vm.pages = Math.ceil(response.data.totalCount / response.data.perPage)
               vm.todos = response.data.items
             })
@@ -44,7 +43,6 @@ var app = new Vue({
     },
     watch: {
         'page': function(newVal, oldVal) {
-            console.log("called")
             this.fetch(newVal)
         }
     },
