@@ -11,9 +11,10 @@ import akka.stream.ActorMaterializer
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.StrictLogging
 import doobie.hikari.HikariTransactor
-import eu.radusw.repositories.TodoRepository
+import eu.radusw.services.interpreters.repositories.TodoRepository
 import eu.radusw.resources.{FrontendResource, TodoResource, VersionResource}
-import eu.radusw.services.TodoService
+import eu.radusw.services.interpreters.AnotherServiceInterpreter
+import eu.radusw.services.{ComposeThemService, TodoService}
 import monix.eval.Task
 import monix.execution.ExecutionModel.AlwaysAsyncExecution
 import monix.execution.Scheduler
@@ -40,7 +41,7 @@ object Server extends App with StrictLogging {
   logger.info(s"Running any migrations...")
   flyway.migrate()
 
-  // Blocking operation scheduler
+  // Blocking operations scheduler
   implicit val blockingOpsScheduler = Scheduler(Contexts.blockingOpsDispatcher, AlwaysAsyncExecution)
 
   object Repositories {
@@ -56,12 +57,14 @@ object Server extends App with StrictLogging {
     import Repositories._
 
     val todoService: TodoService[Task] = todoRepository
+    val anotherService = new AnotherServiceInterpreter
+    val composeThemService = new ComposeThemService[Task](todoService, anotherService)
   }
 
   object Resources {
     import Services._
 
-    val todoResource = new TodoResource(todoService)
+    val todoResource = new TodoResource(todoService, composeThemService)
   }
 
   // Akka HTTP

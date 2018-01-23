@@ -6,7 +6,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route
 import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
 import eu.radusw.models.{Todo, TodoId}
-import eu.radusw.services.TodoService
+import eu.radusw.services.{ComposeThemService, TodoService}
 import eu.radusw.util.Pagination
 import eu.radusw.util.Pagination._
 import eu.radusw.util.JsonHelper._
@@ -14,7 +14,10 @@ import io.circe.generic.auto._
 import monix.eval.Task
 import monix.execution.Scheduler
 
-class TodoResource(service: TodoService[Task])(implicit scheduler: Scheduler) {
+class TodoResource(
+    service: TodoService[Task],
+    composeService: ComposeThemService[Task]
+)(implicit scheduler: Scheduler) {
 
   def route(): Route = pathPrefix("todos") {
     pathEndOrSingleSlash {
@@ -45,7 +48,16 @@ class TodoResource(service: TodoService[Task])(implicit scheduler: Scheduler) {
                 complete(service.delete(todoId).runAsync)
               }
           }
-        }
+        } ~
+          pathPrefix("compose") {
+            pathEndOrSingleSlash {
+              get {
+                parameter("value".as[String] ? "composed") { value =>
+                  complete(composeService.composedOp(todoId, value).runAsync)
+                }
+              }
+            }
+          }
       }
   }
 }

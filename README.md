@@ -1,7 +1,12 @@
 # scala-todolist
 Functional Scala Todo-List using doobie, flyway, circe, akka-http, monix
 
-## Installation
+## Running locally
+```
+sbt run
+```
+
+## Dockerized
 
 Build a docker image:
 ```
@@ -22,9 +27,4 @@ Use:
 $docker logs todo --follow
 
 $curl http://localhost:9000/api/todos
-```
-
-## Running locally
-```
-sbt "run conf/dev.conf"
 ```

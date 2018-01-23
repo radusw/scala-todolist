@@ -5,15 +5,20 @@ import eu.radusw.util.{PaginationResult, WithDatabase}
 import org.scalatest.{Matchers, WordSpec}
 import akka.http.scaladsl.testkit.ScalatestRouteTest
 import eu.radusw.models.{Todo, TodoId}
-import eu.radusw.repositories.TodoRepository
+import eu.radusw.services.interpreters.repositories.TodoRepository
 import eu.radusw.resources.TodoResource
+import eu.radusw.services.ComposeThemService
+import eu.radusw.services.interpreters.AnotherServiceInterpreter
+import monix.eval.Task
 
 class TodoSpec extends WordSpec with Matchers with WithDatabase with ScalatestRouteTest {
   import de.heikoseeberger.akkahttpcirce.FailFastCirceSupport._
   import eu.radusw.util.JsonHelper._
   import io.circe.generic.auto._
 
-  val resource = new TodoResource(new TodoRepository()(xa))(scheduler)
+  val todoService = new TodoRepository()(xa)
+  val composeThemService = new ComposeThemService[Task](todoService, new AnotherServiceInterpreter)
+  val resource = new TodoResource(todoService, composeThemService)(scheduler)
   val route = resource.route()
 
   var id: TodoId = _

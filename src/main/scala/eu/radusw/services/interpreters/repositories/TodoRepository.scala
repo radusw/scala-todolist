@@ -1,4 +1,4 @@
-package eu.radusw.repositories
+package eu.radusw.services.interpreters.repositories
 
 import java.time.Instant
 import java.util.UUID
