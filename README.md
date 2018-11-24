@@ -1,21 +1,27 @@
 # scala-todolist
 Functional Scala Todo-List using doobie, flyway, circe, akka-http, monix
 
+## Testing
+```
+$ docker-compose -f docker-compose-test.yml up
+$ sbt test
+```
+
 ## Running locally
 ```
-sbt run
+$ sbt run
 ```
 
 ## Dockerized
 
 Build a docker image:
 ```
-$sbt docker:publishLocal
+$ sbt docker:publishLocal
 ```
 
 Run a container:
 ```
-$docker run -d -e PG_HOST='docker.for.mac.localhost' \
+$ docker run -d -e PG_HOST='docker.for.mac.localhost' \
  -e PG_PORT='5432' \
  -e PG_USER='dev' \
  -e PG_DATABASE_NAME='world' \
@@ -24,7 +30,7 @@ $docker run -d -e PG_HOST='docker.for.mac.localhost' \
 
 Use:
 ```
-$docker logs todo --follow
+$ docker logs todo --follow
 
-$curl http://localhost:9000/api/todos
+$ curl http://localhost:9000/api/todos
 ```
